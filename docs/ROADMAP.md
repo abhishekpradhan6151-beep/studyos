@@ -11,7 +11,7 @@ Retain the already working Next.js 16 App Router, React 19, TypeScript, Tailwind
 | Phase | Implemented functionality | Verification evidence and outstanding gates | Status |
 |---|---|---|---|
 | 1. Architecture/foundation | Typed Next.js project, Supabase clients, schema, migrations, CI | Green install/lint/typecheck/build; migration filenames now match hosted history | Verified in CI; migration alignment under PR review |
-| 2. Design system | Responsive navigation, glass surfaces, theme support, empty/error/loading states | iPad/mobile/desktop E2E; detailed visual/VoiceOver review remains | Implemented; partly verified |
+| 2. Design system | Responsive navigation, glass surfaces, high-contrast/reduced-transparency/forced-colors support and theme persistence | Browser system-theme and mobile keyboard E2E under Phase 2 CI; real iPad VoiceOver review remains | Implemented; phase verification in progress |
 | 3. Auth and security | Signup, login, recovery, protected routes, private storage, 14 RLS tables | CI browser flow and disposable DB validation pass; hosted emails/redirects still to test | Implemented; partly verified |
 | 4. Onboarding/dashboard | Optional profile/level/subjects/goal/target, real-data dashboard | Onboarding and empty data E2E | Verified in disposable CI |
 | 5. Study planner/tasks | Subjects, daily/weekly sessions, timer, deadlines, task CRUD/filter/sort | E2E persistence across reload and timezone tests | Verified in disposable CI |
@@ -40,3 +40,7 @@ Retain the already working Next.js 16 App Router, React 19, TypeScript, Tailwind
 ## Release acceptance
 
 Every public-facing operation must persist or report an actionable error; never show fake study records, analytics or AI output. No browser-exposed privileged keys. Automated checks do not replace a successful live AI inference or real email delivery.
+
+## Phase 2 audit deliverable
+
+See [Live integration and security release review](RELEASE_READINESS.md) for verified service status, AI Gateway diagnostics, Supabase password-security warning, required GitHub rules, and outstanding operator-owned gates. Phase 2 code adds accessibility fallbacks, an actual two-user isolation test, and sanitized gateway error responses. Production launch remains gated by real AI/SMTP checks.

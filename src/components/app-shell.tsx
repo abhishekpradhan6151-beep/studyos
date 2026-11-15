@@ -52,7 +52,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return <div className="workspace">
     <a className="skip-link" href="#main-content">Skip to content</a>
     {open && <button className="nav-scrim" aria-label="Close navigation" onClick={() => setOpen(false)} />}
-    <aside ref={sidebarRef} className={`sidebar ${open ? 'is-open' : ''}`} aria-label="Workspace navigation" inert={mobile && !open} role={mobile && open ? 'dialog' : undefined} aria-modal={mobile && open ? true : undefined}>
+    <aside id="workspace-sidebar" ref={sidebarRef} className={`sidebar ${open ? 'is-open' : ''}`} aria-label="Workspace navigation" inert={mobile && !open} role={mobile && open ? 'dialog' : undefined} aria-modal={mobile && open ? true : undefined}>
       <Link href="/dashboard" className="brand"><span className="brand-mark">S</span><span className="brand-name">StudyOS<span className="brand-dot" /></span></Link>
       <button className="icon-btn nav-close" aria-label="Close navigation" onClick={() => setOpen(false)}><X size={20} /></button>
       <p className="nav-label">WORKSPACE</p>
@@ -64,7 +64,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </div>
     </aside>
     <div className="main-shell"><header className="topbar"><div className="breadcrumb"><span>My workspace</span><span>/</span><strong>{navigation.find(n => n.href === path)?.label || 'StudyOS'}</strong></div><span className="workspace-status"><span />Your personal space</span></header><FocusBanner /><main id="main-content" className="page-content" tabIndex={-1}>{children}</main><footer className="workspace-footer"><span>Make room for what matters.</span><span>StudyOS</span></footer></div>
-    <nav className="mobile-nav" aria-label="Quick navigation">{navigation.slice(0, 4).map(({ href, label, icon: Icon }) => <Link key={href} href={href} aria-current={path === href ? 'page' : undefined} className={path === href ? 'active' : ''}><Icon size={21} /><span>{label === 'Study Planner' ? 'Planner' : label === 'AI Assistant' ? 'AI' : label === 'Dashboard' ? 'Home' : label}</span></Link>)}<button aria-expanded={open} aria-label="More navigation" onClick={() => setOpen(!open)}><Menu size={21} /><span>More</span></button></nav>
+    <nav className="mobile-nav" aria-label="Quick navigation">{navigation.slice(0, 4).map(({ href, label, icon: Icon }) => <Link key={href} href={href} aria-current={path === href ? 'page' : undefined} className={path === href ? 'active' : ''}><Icon size={21} /><span>{label === 'Study Planner' ? 'Planner' : label === 'AI Assistant' ? 'AI' : label === 'Dashboard' ? 'Home' : label}</span></Link>)}<button aria-expanded={open} aria-controls="workspace-sidebar" aria-label="More navigation" onClick={() => setOpen(!open)}><Menu size={21} /><span>More</span></button></nav>
   </div>;
 }
 function FocusBanner() {
