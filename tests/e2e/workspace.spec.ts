@@ -39,3 +39,24 @@ test('a valid recovery link changes the password and invalid links fail safely',
   try { await page.goto('/forgot-password'); await page.getByLabel('Email address').fill(email); await page.getByRole('button', { name: 'Send recovery link', exact: true }).click(); await expect(page.getByRole('status')).toContainText('password recovery link'); const link = await admin.auth.admin.generateLink({ type: 'recovery', email }); expect(link.error).toBeNull(); await page.goto(`/auth/confirm?token_hash=${link.data.properties!.hashed_token}&type=recovery`); await expect(page).toHaveURL(/\/reset-password/); expect(new URL(page.url()).origin).toBe('http://127.0.0.1:3000'); await page.getByLabel('New password', { exact: true }).fill(newPassword); await page.getByRole('button', { name: 'Update password', exact: true }).click(); await expect.poll(async () => (await page.getByRole('status').allTextContents()).join(' ') || (await page.getByRole('alert').allTextContents()).join(' ') || `No status or error on ${new URL(page.url()).pathname}`, { timeout: 15000 }).toContain('Password updated'); const client = createClient(url, process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!, { auth: { persistSession: false } }); expect((await client.auth.signInWithPassword({ email, password: oldPassword })).error).toBeTruthy(); expect((await client.auth.signInWithPassword({ email, password: newPassword })).error).toBeNull(); await client.auth.signOut(); await page.goto('/auth/confirm?token_hash=invalid&type=recovery&next=https://evil.example'); await expect(page).toHaveURL(/\/login\?error=auth/); await expect(page.locator('.auth-form-wrap').getByRole('alert')).toBeVisible(); }
   finally { await admin.auth.admin.deleteUser(id); }
 });
+
+test('the install manifest supports an iPad home-screen workspace', async ({ request }) => {
+  const response = await request.get('/manifest.webmanifest');
+  expect(response.ok()).toBe(true);
+  expect(response.headers()['content-type']).toContain('json');
+  const manifest = await response.json();
+  expect(manifest).toMatchObject({
+    name: 'StudyOS — A calmer way to learn',
+    short_name: 'StudyOS',
+    id: '/dashboard',
+    start_url: '/dashboard',
+    scope: '/',
+    display: 'standalone',
+  });
+  expect(manifest.icons).toEqual(expect.arrayContaining([
+    expect.objectContaining({ src: '/icon.svg', type: 'image/svg+xml' }),
+  ]));
+  const iconResponse = await request.get('/icon.svg');
+  expect(iconResponse.ok()).toBe(true);
+  expect(iconResponse.headers()['content-type']).toContain('image/svg+xml');
+});
