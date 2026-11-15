@@ -10,3 +10,8 @@
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 
 @media(pointer:coarse){.icon-btn,.row-actions .icon-btn,.account .icon-btn{min-width:44px;min-height:44px}.check-button{position:relative}.check-button:before{content:"";position:absolute;inset:-9px}.habit-day button{min-height:38px}.habit-day button:before{content:"";position:absolute;inset:-3px}.habit-day button{position:relative}.theme-select select{min-height:44px}.segmented button{min-height:40px}}
+
+/* Accessibility overrides keep Liquid Glass legible without motion or transparency. */
+@media(prefers-reduced-transparency:reduce){:root{--glass:var(--surface);--sidebar:var(--surface)}.sidebar,.topbar,.mobile-nav,.nav-scrim,.dialog::backdrop{backdrop-filter:none;-webkit-backdrop-filter:none}}
+@media(prefers-contrast:more){:root{--border:#737887;--muted:#383f50;--faint:#454b5c}.dark{--border:#aab0bf;--muted:#e4e6ed;--faint:#cdd2df}.nav-item.active,.mobile-nav .active{outline:2px solid var(--accent);outline-offset:-2px}.btn-primary{box-shadow:none}}
+@media(forced-colors:active){.sidebar,.topbar,.mobile-nav,.panel,.dialog{background:Canvas;color:CanvasText;border-color:CanvasText;backdrop-filter:none;-webkit-backdrop-filter:none}.btn-primary,.nav-item.active,.mobile-nav .active{background:Highlight;color:HighlightText;forced-color-adjust:none}.progress>span,.activity-bar-col .bar{background:Highlight}.focus-ring .ring-fill{stroke:Highlight}.focus-ring .ring-track{stroke:CanvasText}}
