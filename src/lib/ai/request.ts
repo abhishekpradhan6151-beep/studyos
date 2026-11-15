@@ -1,6 +1,10 @@
 export function sameOrigin(request: Request) {
   const origin = request.headers.get('origin');
-  return !!origin && origin === new URL(request.url).origin && request.headers.get('sec-fetch-site') !== 'cross-site';
+  const url = new URL(request.url);
+  // Host is the actual HTTP destination; Next's request URL can contain its bind address.
+  // Never use user-supplied forwarded-host headers to authorize a request.
+  const host = request.headers.get('host') || url.host;
+  return !!origin && origin === `${url.protocol}//${host}` && request.headers.get('sec-fetch-site') !== 'cross-site';
 }
 export async function readLimitedJson(request: Request, maxBytes = 65536): Promise<unknown> {
   if (!request.headers.get('content-type')?.includes('application/json')) throw new Error('Expected JSON');

@@ -40,7 +40,6 @@ jobs:
           name: browser-verification
           path: |
             test-results/**/*.png
-            test-results/**/error-context.md
           retention-days: 7
           if-no-files-found: ignore
       - name: Stop disposable services
