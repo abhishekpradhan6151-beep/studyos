@@ -74,8 +74,9 @@ export async function POST(request: Request) {
     if (saveError) return problem('An answer was generated, but it could not be saved. Your message is still in the composer; please try again.', 503);
     return NextResponse.json({ conversationId: input.conversationId, requestId: input.requestId }, { headers: { 'Cache-Control': 'no-store' } });
   } catch (error) {
-    const details = error && typeof error === 'object' ? error as { name?: string; statusCode?: number } : {};
-    console.error('StudyOS AI request failed', { requestId: input.requestId, name: details.name, statusCode: details.statusCode });
+    const details = error && typeof error === 'object' ? error as { name?: string; statusCode?: number; message?: string } : {};
+    const reason = /payment|billing|credit/i.test(details.message || '') ? 'billing_or_credits' : /oidc|authentication|token|credential/i.test(details.message || '') ? 'authentication' : /model.*not.*found/i.test(details.message || '') ? 'model_configuration' : 'provider_rejection';
+    console.error('StudyOS AI request failed', { requestId: input.requestId, name: details.name, statusCode: details.statusCode, reason });
     if (details.statusCode === 401 || details.statusCode === 403 || details.statusCode === 402) return problem('AI access is not active for this deployment. The administrator needs to enable AI Gateway access or available credits in Vercel.', 503);
     if (details.statusCode === 429) return problem('The AI provider is busy or its usage limit has been reached. Please try again later.', 429);
     return problem('Your assistant couldn’t finish this request. Please try again; for documents, check that the file is readable and not password-protected.', 502);

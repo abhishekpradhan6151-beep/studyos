@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { LayoutDashboard, Sparkles, CalendarDays, CheckSquare, NotebookPen, Target, ChartNoAxesColumn, Settings, LogOut, Menu, X, ArrowUpRight, Pause, Play, Flame } from 'lucide-react';
@@ -25,10 +25,23 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const path = usePathname(); const router = useRouter();
   const { profile, email } = useWorkspace(); const notify = useToast();
   const [open, setOpen] = useState(false); const [signingOut, setSigningOut] = useState(false);
+  const [mobile, setMobile] = useState(false); const sidebarRef = useRef<HTMLElement>(null);
+  useEffect(() => { const media = matchMedia('(max-width: 767px)'); const update = () => setMobile(media.matches); update(); media.addEventListener('change', update); return () => media.removeEventListener('change', update); }, []);
   const { theme, setTheme } = useTheme(); const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
   useEffect(() => setOpen(false), [path]);
-  useEffect(() => { if (!open) return; const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false); }; window.addEventListener('keydown', handler); return () => window.removeEventListener('keydown', handler); }, [open]);
+  useEffect(() => {
+    if (!open || !mobile) return;
+    const previous = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const items = () => Array.from(sidebarRef.current?.querySelectorAll<HTMLElement>('a[href],button:not([disabled]),select') || []).filter(e => e.offsetParent !== null);
+    items()[0]?.focus();
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false);
+      if (e.key === 'Tab') { const list = items(); const first = list[0], last = list.at(-1); if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last?.focus(); } else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first?.focus(); } }
+    };
+    window.addEventListener('keydown', handler);
+    return () => { window.removeEventListener('keydown', handler); previous?.focus(); };
+  }, [open, mobile]);
   async function signOut() {
     setSigningOut(true);
     const { error } = await browserDb().auth.signOut();
@@ -39,7 +52,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return <div className="workspace">
     <a className="skip-link" href="#main-content">Skip to content</a>
     {open && <button className="nav-scrim" aria-label="Close navigation" onClick={() => setOpen(false)} />}
-    <aside className={`sidebar ${open ? 'is-open' : ''}`} aria-label="Workspace navigation">
+    <aside ref={sidebarRef} className={`sidebar ${open ? 'is-open' : ''}`} aria-label="Workspace navigation" inert={mobile && !open} role={mobile && open ? 'dialog' : undefined} aria-modal={mobile && open ? true : undefined}>
       <Link href="/dashboard" className="brand"><span className="brand-mark">S</span><span className="brand-name">StudyOS<span className="brand-dot" /></span></Link>
       <button className="icon-btn nav-close" aria-label="Close navigation" onClick={() => setOpen(false)}><X size={20} /></button>
       <p className="nav-label">WORKSPACE</p>

@@ -1,9 +1,14 @@
 'use client';
-import { useEffect, useId, useRef } from 'react';
+import { cloneElement, isValidElement, useEffect, useId, useRef } from 'react';
 import { LoaderCircle, X, ArrowRight, CircleAlert, Inbox } from 'lucide-react';
 import Link from 'next/link';
 export function Button({children,className='',busy=false,variant='primary',...props}:React.ButtonHTMLAttributes<HTMLButtonElement>&{busy?:boolean;variant?:'primary'|'secondary'|'ghost'|'danger'}) {return <button {...props} disabled={props.disabled||busy} className={`btn btn-${variant} ${className}`} aria-busy={busy}>{busy&&<LoaderCircle size={16} className="spin"/>}{children}</button>;}
-export function Field({label,children,hint}:{label:string;children:React.ReactNode;hint?:string}) {return <label className="field"><span>{label}</span>{children}{hint&&<small>{hint}</small>}</label>;}
+export function Field({label,children,hint}:{label:string;children:React.ReactNode;hint?:string}) {
+  const generatedId=useId();
+  const child=isValidElement<{id?:string;'aria-describedby'?:string}>(children)?children:null;
+  const id=child?.props.id||generatedId;
+  return <div className="field"><label htmlFor={id}>{label}</label>{child?cloneElement(child,{id,'aria-describedby':[child.props['aria-describedby'],hint?`${id}-hint`:null].filter(Boolean).join(' ')||undefined}):children}{hint&&<small id={`${id}-hint`}>{hint}</small>}</div>;
+}
 export function PageHeader({eyebrow,title,description,action}:{eyebrow?:string;title:string;description?:string;action?:React.ReactNode}) {return <header className="page-heading"><div>{eyebrow&&<p className="eyebrow">{eyebrow}</p>}<h1>{title}</h1>{description&&<p className="muted">{description}</p>}</div>{action}</header>;}
 export function Panel({children,className=''}:{children:React.ReactNode;className?:string}) {return <section className={`panel ${className}`}>{children}</section>;}
 export function SectionHeading({title,subtitle,href,action}:{title:string;subtitle?:string;href?:string;action?:React.ReactNode}) {return <div className="section-heading"><div><h2>{title}</h2>{subtitle&&<p className="muted small">{subtitle}</p>}</div>{href?<Link href={href} className="text-link">View all <ArrowRight size={14}/></Link>:action}</div>;}

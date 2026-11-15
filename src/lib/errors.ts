@@ -1,4 +1,5 @@
 export function messageOf(error: unknown): string {
+  if (error && typeof error === 'object' && 'issues' in error && Array.isArray(error.issues)) return error.issues.map((issue: {message?:string}) => issue.message || 'Check your input.').join(' ' );
   if (error && typeof error === 'object' && 'message' in error && typeof error.message === 'string') {
     if (error.message.includes('one_running_session')) return 'Pause your current focus session before starting another one.';
     if (error.message.includes('foreign key')) return 'This item is still in use. Remove its links before deleting it.';
