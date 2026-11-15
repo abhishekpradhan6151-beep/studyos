@@ -16,9 +16,11 @@ enabled = true
 enabled = false
 [studio]
 enabled = false
+# Move the local mail-capture UI off Supabase's common default host port.
+# Auth email is still captured locally; no messages leave the test environment.
 [local_smtp]
 enabled = true
-port = 54324
+port = 56324
 [storage]
 enabled = true
 file_size_limit = "8MiB"
