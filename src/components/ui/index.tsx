@@ -1,0 +1,21 @@
+'use client';
+import { useEffect, useId, useRef } from 'react';
+import { LoaderCircle, X, ArrowRight, CircleAlert, Inbox } from 'lucide-react';
+import Link from 'next/link';
+export function Button({children,className='',busy=false,variant='primary',...props}:React.ButtonHTMLAttributes<HTMLButtonElement>&{busy?:boolean;variant?:'primary'|'secondary'|'ghost'|'danger'}) {return <button {...props} disabled={props.disabled||busy} className={`btn btn-${variant} ${className}`} aria-busy={busy}>{busy&&<LoaderCircle size={16} className="spin"/>}{children}</button>;}
+export function Field({label,children,hint}:{label:string;children:React.ReactNode;hint?:string}) {return <label className="field"><span>{label}</span>{children}{hint&&<small>{hint}</small>}</label>;}
+export function PageHeader({eyebrow,title,description,action}:{eyebrow?:string;title:string;description?:string;action?:React.ReactNode}) {return <header className="page-heading"><div>{eyebrow&&<p className="eyebrow">{eyebrow}</p>}<h1>{title}</h1>{description&&<p className="muted">{description}</p>}</div>{action}</header>;}
+export function Panel({children,className=''}:{children:React.ReactNode;className?:string}) {return <section className={`panel ${className}`}>{children}</section>;}
+export function SectionHeading({title,subtitle,href,action}:{title:string;subtitle?:string;href?:string;action?:React.ReactNode}) {return <div className="section-heading"><div><h2>{title}</h2>{subtitle&&<p className="muted small">{subtitle}</p>}</div>{href?<Link href={href} className="text-link">View all <ArrowRight size={14}/></Link>:action}</div>;}
+export function Empty({title,description,action,icon}:{title:string;description:string;action?:React.ReactNode;icon?:React.ReactNode}) {return <div className="empty"><div className="empty-icon">{icon||<Inbox size={23}/>}</div><h3>{title}</h3><p>{description}</p>{action}</div>;}
+export function Loading({label='Loading your workspace…'}:{label?:string}) {return <div className="loading" role="status"><LoaderCircle className="spin" size={22}/><span>{label}</span></div>;}
+export function ErrorState({error,retry}:{error:string;retry?:()=>void}) {return <div className="error-state" role="alert"><CircleAlert size={20}/><div><strong>We couldn’t complete that.</strong><p>{error}</p>{retry&&<Button variant="secondary" onClick={retry}>Try again</Button>}</div></div>;}
+export function FormError({error}:{error:string}) {return error?<p className="form-error" role="alert">{error}</p>:null;}
+export function Dialog({title,children,onClose,wide=false}:{title:string;children:React.ReactNode;onClose:()=>void;wide?:boolean}) {
+  const ref=useRef<HTMLDialogElement>(null);const id=useId();
+  useEffect(()=>{const d=ref.current;d?.showModal();return()=>d?.close();},[]);
+  return <dialog ref={ref} className={`dialog ${wide?'wide':''}`} aria-labelledby={id} onCancel={e=>{e.preventDefault();onClose();}} onClick={e=>{if(e.target===e.currentTarget){const r=e.currentTarget.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)onClose();}}}><div className="dialog-heading"><h2 id={id}>{title}</h2><button className="icon-btn" onClick={onClose} aria-label="Close dialog"><X size={20}/></button></div>{children}</dialog>;
+}
+export function ConfirmDelete({name,onConfirm,onClose,busy,error}:{name:string;onConfirm:()=>void;onClose:()=>void;busy:boolean;error:string}) {return <Dialog title={`Delete ${name}?`} onClose={()=>{if(!busy)onClose();}}><p className="muted">This permanently removes this item from your account.</p><FormError error={error}/><div className="form-actions"><Button variant="secondary" onClick={onClose} disabled={busy}>Cancel</Button><Button variant="danger" busy={busy} onClick={onConfirm}>Delete</Button></div></Dialog>;}
+export function Progress({value,label}:{value:number;label:string}) {return <div className="progress" role="progressbar" aria-label={label} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(Math.min(100,Math.max(0,value)))}><span style={{width:`${Math.min(100,Math.max(0,value))}%`}}/></div>;}
+export function Pill({children,tone='neutral'}:{children:React.ReactNode;tone?:string}) {return <span className={`pill ${tone}`}>{children}</span>;}

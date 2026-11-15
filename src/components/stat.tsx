@@ -1,0 +1,1 @@
+export function Stat({ label, value, detail, icon }: { label: string; value: string; detail: string; icon: React.ReactNode }) { return <div className="stat-card"><div className="stat-top"><span>{label}</span>{icon}</div><div className="stat-value mono">{value}</div><p>{detail}</p></div>; }

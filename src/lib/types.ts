@@ -1,0 +1,12 @@
+import type { Database, Tables } from './supabase/database.types';
+export type TableName = keyof Database['public']['Tables'];
+export type Profile = Tables<'profiles'>;
+export type Task = Tables<'tasks'>;
+export type StudySession = Tables<'study_sessions'>;
+export type Note = Tables<'notes'>;
+export type Goal = Tables<'goals'>;
+export type Habit = Tables<'habits'>;
+export type HabitEntry = Tables<'habit_entries'>;
+export type Subject = Tables<'subjects'>;
+export type Message = Tables<'messages'>;
+export type StudyDocument = Tables<'documents'>;
