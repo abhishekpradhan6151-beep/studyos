@@ -35,10 +35,10 @@ All owner and foreign-key columns are indexed. Timestamps use timestamptz; calen
 
 ## Folder structure
 
-- `src/app`: routes, layouts, auth callback and server API endpoints.
+- `src/app`: routes, layouts, auth callback, install manifest and server API endpoints.
 - `src/components/ui`: shared accessible controls, dialogs, empty/error/loading states.
 - `src/components`: navigation, authentication context and application shell.
-- `src/features`: dashboard, planner, tasks, notes, goals/habits, AI, analytics and settings.
+- `src/app/(workspace)`: dashboard, planner, tasks, notes, goals/habits, AI, analytics and settings route implementations; a `src/features` extraction remains an incremental refactor, not an existing directory.
 - `src/lib/supabase`: browser/server/session helpers and generated database types.
 - `src/lib`: validation, date/analytics functions and shared utilities.
 - `supabase/migrations`: reviewed schema and security migrations.
@@ -56,3 +56,7 @@ Typecheck, production build, focused unit tests, RLS isolation tests, and actual
 ## External prerequisites
 
 GitHub and Vercel linkage and Supabase project access are available. Supabase auth redirect URLs and email delivery must be verified against the deployed origin. AI Gateway OIDC requires an eligible team and available credits; this is verified with an authenticated live request before claiming AI completion. Payment details and secrets must not be requested in chat.
+
+## Migration parity (2026-11-15)
+
+Hosted Supabase migration history records versions `20261115025353_studyos_foundation` and `20261115030656_study_intervals_and_chat_transactions`. Equivalent existing SQL files have been renamed to those versions, without running migration SQL against production. Keep future migration files aligned with applied history; validate on disposable Supabase before deploying.
